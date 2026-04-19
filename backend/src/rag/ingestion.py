@@ -19,34 +19,24 @@ def extract_video_id(url_or_id: str) -> str:
     raise ValueError(f"Could not extract video ID from: {url_or_id}")
 
 
-def fetch_transcript(video_id: str) -> tuple[str, str]:
-    """
-    Returns (transcript_text, detected_language)
-    Tries Hindi first, then English, then any available language.
-    """
-    ytt_api = YouTubeTranscriptApi()
-
-    # Priority order: Hindi → English → anything available
-    language_priority = ["hi", "en", "en-US", "en-GB"]
-
-    # Try preferred languages first
-    for lang in language_priority:
-        try:
-            transcript_list = ytt_api.fetch(video_id, languages=[lang])
-            text = " ".join(chunk.text for chunk in transcript_list)
-            detected_lang = "hindi" if lang == "hi" else "english"
-            return text, detected_lang
-        except Exception:
-            continue
-
-    # Fallback: try whatever language is available
+def fetch_transcript(video_id: str) -> tuple:
+    try:
+        from youtube_transcript_api.proxies import WebshareProxyConfig
+        ytt_api = YouTubeTranscriptApi(
+            proxy_config=WebshareProxyConfig(
+                proxy_username=os.getenv("PROXY_USERNAME", ""),
+                proxy_password=os.getenv("PROXY_PASSWORD", ""),
+            )
+        )
+    except Exception:
+        ytt_api = YouTubeTranscriptApi()
+    
     try:
         transcript_list = ytt_api.fetch(video_id)
         text = " ".join(chunk.text for chunk in transcript_list)
         return text, "english"
     except Exception as e:
         raise ValueError(f"Failed to fetch transcript: {str(e)}")
-
 
 def split_transcript(transcript: str) -> list:
     settings = get_settings()
