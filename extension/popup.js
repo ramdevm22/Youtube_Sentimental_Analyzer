@@ -3,7 +3,7 @@
  * Communicates with the FastAPI backend running at localhost:8000.
  */
 
-const API_BASE = 'http://localhost:8000/api/v1'
+const API_BASE = 'https://youtube-sentimental-analyzer-xio3.onrender.com/api/v1'
 
 // ── State ──────────────────────────────────────────────────────────────────────
 let currentVideoId = null
