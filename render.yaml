@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: youtube-sentiment-backend
+    env: python
+    region: oregon
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false   # set manually in Render dashboard
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
+      - key: EMBEDDING_MODEL
+        value: text-embedding-3-small
+      - key: CHUNK_SIZE
+        value: "1000"
+      - key: CHUNK_OVERLAP
+        value: "200"
+      - key: RETRIEVER_K
+        value: "4"
