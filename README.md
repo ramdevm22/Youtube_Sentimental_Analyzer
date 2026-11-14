@@ -160,6 +160,3 @@ ngrok http 8000
 ```
 This gives you a public URL that tunnels to your local server.
 
-## 📝 License
-
-MIT
